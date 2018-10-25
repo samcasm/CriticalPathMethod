@@ -46,10 +46,10 @@ def walkBackward(activities):
     for idx,activity in enumerate(activities):
 
         print(activity.id)
-        LF = findLateStartFromSuccessorList(activity.successors,activities) if idx == 0 else findLateStartFromSuccessorList(activity.successors,activities) - 1
+        LF = findLateStartFromSuccessorList(activity.successors,activities) if len(activity.successors) == 0 else findLateStartFromSuccessorList(activity.successors,activities) - 1
         LS = LF - activity.duration + 1
 
-        print(LF, LS)
+        print(LF, LS, activity.successors)
 
         activity.ls = LS
         activity.lf= LF
