@@ -6,10 +6,10 @@ Steps to use:
 3. run python main.py
 
 Pre-requisites:
-Python version: Python 2.7.15rc1
+1. Python version- Python 2.7.15rc1
 
 Glossary:
-ES = Early Start
-EF = Early Finish
-LS = Late Start
-LF = Late Finish
+1. ES = Early Start
+2. EF = Early Finish
+3. LS = Late Start
+4. LF = Late Finish
