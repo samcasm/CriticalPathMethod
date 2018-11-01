@@ -145,9 +145,12 @@ for activity in activities:
     print("Predecessors: " + str(activityPredecessors) +
           "  Successors: " + str(activitySuccessors))
 
-print("====================     SCHEDULE SUMMARY     =====================")
+print("\n\n====================     SCHEDULE SUMMARY     =====================\n")
 finishDay = max(task.lf for task in activities)
 startDay = min(task.es for task in activities)
 print("Start Day: " + str(startDay) + " Finish Day: " +
       str(finishDay) + "  Duration: " + str(finishDay) + " Days\n")
 print("Critical Path: " + str(criticalPath))
+
+print("\n====================    END     =====================\n")
+
