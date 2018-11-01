@@ -1,5 +1,6 @@
-import activityClass #constructor class for each activity
+import activityClass  # constructor class for each activity
 import sys
+
 
 def findEarlyFinishFromPredecessorList(predecessorList):
     if len(predecessorList) == 0:
@@ -9,110 +10,117 @@ def findEarlyFinishFromPredecessorList(predecessorList):
     else:
         return max(task.ef for task in predecessorList)
 
+
 def findLateStartFromSuccessorList(successorList, activities):
-    if len(successorList) == 0: #if last node find greatest early finish from all activities
-        return max(activity.ef for activity in activities) 
+    if len(successorList) == 0:  # if last node find greatest early finish from all activities
+        return max(activity.ef for activity in activities)
     elif len(successorList) == 1:
-        return successorList[0].ls 
+        return successorList[0].ls
     else:
-        return min(task.ls for task in successorList) 
+        return min(task.ls for task in successorList)
+
 
 def walkForward(activities):
     for activity in activities:
-       
+
         ES = findEarlyFinishFromPredecessorList(activity.predecessors) + 1
         EF = activity.duration + ES - 1
 
         activity.es = ES
         activity.ef = EF
 
+
 def walkBackward(activities):
-    activities.reverse() #Reverse the tasks in place for backward walking 
+    activities.reverse()  # Reverse the tasks in place for backward walking
     for activity in activities:
 
         if len(activity.successors) == 0:
-            LF = findLateStartFromSuccessorList(activity.successors,activities)
+            LF = findLateStartFromSuccessorList(
+                activity.successors, activities)
         else:
-            LF = findLateStartFromSuccessorList(activity.successors,activities) - 1
+            LF = findLateStartFromSuccessorList(
+                activity.successors, activities) - 1
 
         LS = LF - activity.duration + 1
 
         activity.ls = LS
-        activity.lf= LF
+        activity.lf = LF
 
-    activities.reverse() #Once done backward walking reverse the tasks in place
+    activities.reverse()  # Once done backward walking reverse the tasks in place
+
 
 def criticalPathCalculator(activities):
     criticalPath = []
     for activity in activities:
         if (activity.ef - activity.lf == 0) and (activity.es - activity.ls == 0):
             criticalPath.append(activity.id)
-    
+
     return criticalPath
 
+
 def calculateSlack(activities):
-    for activity in activities: 
+    for activity in activities:
         if (activity.ls - activity.es) == (activity.lf - activity.ef):
             activity.slack = activity.ls - activity.es
         else:
             print("Error: The slacks do not match. Incorrect")
             sys.exit(1)
-            
 
 
-#Create activities list  
+# Create activities list
 print("**************  CRITICAL PATH CALCULATOR  ***************** \n\n")
 
 numberOfTasks = input("How many tasks do you have? : ")
-activities = [] #where all the tasks given by the user are stored
+activities = []  # where all the tasks given by the user are stored
 
 for i in range(numberOfTasks):
 
     id = raw_input("Task ID : ").upper()
     duration = input("Task Duration : ")
+    predecessor_input = raw_input("Predecessors(press enter if none): ")
     newPredsList = []
-    
-    if i != 0:
-        predecessor_input = raw_input("Predecessors(press enter if none): ")
 
-        #Split multiple predecessors
-        predsList = predecessor_input.upper().replace(" ","").split(",")
 
-        #find each predecessor object in activities list and append to the predecessors list of current activity
-        for predValue in predsList:
+    # Split multiple predecessors
+    predsList = predecessor_input.upper().replace(" ", "").split(",")
+
+    # find each predecessor object in activities list and append to the predecessors list of current activity
+    for predValue in predsList:
             for activity in activities:
                 if activity.id == predValue:
                     newPredsList.append(activity)
-                
-    #create a new activity object from Activity constructor  
-    newActivity = activityClass.Activity(id, duration, newPredsList) 
 
-    #Current activity will be a successor to all in its predeccesor list 
+    # create a new activity object from Activity constructor
+    newActivity = activityClass.Activity(id, duration, newPredsList)
+
+    # Current activity will be a successor to all in its predeccesor list
     for pred in newActivity.predecessors:
         pred.successors.append(newActivity)
 
-    #finally add newActivity to list of activities
+    # finally add newActivity to list of activities
     activities.append(newActivity)
 
     print("\n")
 
 
-walkForward(activities)  #find early start and early finish of each activity
-walkBackward(activities)    #find late start and late finish of each activity 
+walkForward(activities)  # find early start and early finish of each activity
+walkBackward(activities)  # find late start and late finish of each activity
 
 
 calculateSlack(activities)
-criticalPath = criticalPathCalculator(activities)  
+criticalPath = criticalPathCalculator(activities)
 
-firstTasks = filter(lambda x: len(x.predecessors) == 0 , activities)
+firstTasks = filter(lambda x: len(x.predecessors) == 0, activities)
 lastTasks = filter(lambda x: len(x.successors) == 0, activities)
 
 print("-------------------------------------------------------------------\n")
 print("Number of Schedule Tasks: " + str(len(activities)))
 print("----------------------FIRST TASKS ---------------------------------")
-print("First Tasks Count: " + str(len(firstTasks)) + "\n" + str(map(lambda x: x.id, firstTasks)))
+print("First Tasks Count: " + str(len(firstTasks)) +
+      "\n" + str(map(lambda x: x.id, firstTasks)))
 print("----------------------LAST TASKS ---------------------------------")
-print("Last Tasks Count: " + str(len(lastTasks)) + "\n" + str(map(lambda x: x.id, lastTasks)))
+print("Last Tasks Count: " + str(len(lastTasks)) +
+      "\n" + str(map(lambda x: x.id, lastTasks)))
 print("-----------------------------------------------------------------------")
 
 print("====================  SCHEDULE / PROJECT TASKS =====================\n\n")
@@ -122,36 +130,24 @@ for activity in activities:
         isCritical = "Yes"
     else:
         isCritical = "No"
-    
+
     activityPredecessors = map(lambda pred: pred.id, activity.predecessors)
     activitySuccessors = map(lambda succ: succ.id, activity.successors)
 
-    print("Task: " + str(activity.id) + 
-            "  Dur: " + str(activity.duration) + 
-            "  ES: Day " + str(activity.es) + 
-            "  LS: Day " + str(activity.ls) + 
-            "  EF: Day " + str(activity.ef) + 
-            "  LF: Day" + str(activity.lf) + 
-            "  Slack: " + str(activity.slack) + 
-            "  Is Critical: " + str(isCritical))
-    print("Predecessors: " + str(activityPredecessors) + 
-            "  Successors: " + str(activitySuccessors))
+    print("Task: " + str(activity.id) +
+          "  Dur: " + str(activity.duration) +
+          "  ES: Day " + str(activity.es) +
+          "  LS: Day " + str(activity.ls) +
+          "  EF: Day " + str(activity.ef) +
+          "  LF: Day" + str(activity.lf) +
+          "  Slack: " + str(activity.slack) +
+          "  Is Critical: " + str(isCritical))
+    print("Predecessors: " + str(activityPredecessors) +
+          "  Successors: " + str(activitySuccessors))
 
 print("====================     SCHEDULE SUMMARY     =====================")
 finishDay = max(task.lf for task in activities)
 startDay = min(task.es for task in activities)
-print("Start Day: " + str(startDay) + " Finish Day: " + str(finishDay) + "  Duration: " + str(finishDay) +  " Days\n")
+print("Start Day: " + str(startDay) + " Finish Day: " +
+      str(finishDay) + "  Duration: " + str(finishDay) + " Days\n")
 print("Critical Path: " + str(criticalPath))
-
-
-
-
-
-
-
-
-    
-        
-
-    
-    
