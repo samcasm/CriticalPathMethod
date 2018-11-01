@@ -57,6 +57,7 @@ def calculateSlack(activities):
         else:
             print("Error: The slacks do not match. Incorrect")
             sys.exit(1)
+            
 
 
 #Create activities list  
@@ -72,7 +73,7 @@ for i in range(numberOfTasks):
     newPredsList = []
     
     if i != 0:
-        predecessor_input = raw_input("Predecessors: ")
+        predecessor_input = raw_input("Predecessors(press enter if none): ")
 
         #Split multiple predecessors
         predsList = predecessor_input.upper().replace(" ","").split(",")
@@ -103,6 +104,17 @@ walkBackward(activities)    #find late start and late finish of each activity
 calculateSlack(activities)
 criticalPath = criticalPathCalculator(activities)  
 
+firstTasks = filter(lambda x: len(x.predecessors) == 0 , activities)
+lastTasks = filter(lambda x: len(x.successors) == 0, activities)
+
+print("-------------------------------------------------------------------\n")
+print("Number of Schedule Tasks: " + str(len(activities)))
+print("----------------------FIRST TASKS ---------------------------------")
+print("First Tasks Count: " + str(len(firstTasks)) + "\n" + str(map(lambda x: x.id, firstTasks)))
+print("----------------------LAST TASKS ---------------------------------")
+print("Last Tasks Count: " + str(len(lastTasks)) + "\n" + str(map(lambda x: x.id, lastTasks)))
+print("-----------------------------------------------------------------------")
+
 print("====================  SCHEDULE / PROJECT TASKS =====================\n\n")
 
 for activity in activities:
@@ -126,8 +138,9 @@ for activity in activities:
             "  Successors: " + str(activitySuccessors))
 
 print("====================     SCHEDULE SUMMARY     =====================")
-totalDuration = sum(int(activity.duration) for activity in activities)
-print("Start Day: 1   Finish Day: " + str(totalDuration) + "  Duration: " + str(totalDuration) +  " Days\n")
+finishDay = max(task.lf for task in activities)
+startDay = min(task.es for task in activities)
+print("Start Day: " + str(startDay) + " Finish Day: " + str(finishDay) + "  Duration: " + str(finishDay) +  " Days\n")
 print("Critical Path: " + str(criticalPath))
 
 
