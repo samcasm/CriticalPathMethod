@@ -1,5 +1,17 @@
 import activityClass  # constructor class for each activity
 import sys
+import csv
+
+
+# import csv
+file_name = sys.argv[1]
+data = []
+for row in csv.reader(open(file_name)):
+    newrow = ",".join(row)
+    newrow = newrow.replace('\t', ' ')
+    data.append(newrow)
+
+csvdata = map(lambda x: x.split(' '), data)
 
 
 def findEarlyFinishFromPredecessorList(predecessorList):
@@ -68,27 +80,26 @@ def calculateSlack(activities):
 
 
 # Create activities list
-print("**************  CRITICAL PATH CALCULATOR  ***************** \n\n")
+print("**************  CRITICAL PATH CALCULATOR  *****************\n")
 
-numberOfTasks = input("How many tasks do you have? : ")
+numberOfTasks = len(csvdata)
 activities = []  # where all the tasks given by the user are stored
 
-for i in range(numberOfTasks):
-
-    id = raw_input("Task ID : ").upper()
-    duration = input("Task Duration : ")
-    predecessor_input = raw_input("Predecessors(press enter if none): ")
+for row in csvdata:
+    #print(row, "check inputs debugger")
+    id = str(row[0])
+    duration = int(row[1])
+    predecessor_input = "" if row[2].upper() == "NA" else row[2]
     newPredsList = []
-
 
     # Split multiple predecessors
     predsList = predecessor_input.upper().replace(" ", "").split(",")
 
     # find each predecessor object in activities list and append to the predecessors list of current activity
     for predValue in predsList:
-            for activity in activities:
-                if activity.id == predValue:
-                    newPredsList.append(activity)
+        for activity in activities:
+            if activity.id == predValue:
+                newPredsList.append(activity)
 
     # create a new activity object from Activity constructor
     newActivity = activityClass.Activity(id, duration, newPredsList)
@@ -99,8 +110,6 @@ for i in range(numberOfTasks):
 
     # finally add newActivity to list of activities
     activities.append(newActivity)
-
-    print("\n")
 
 
 walkForward(activities)  # find early start and early finish of each activity
@@ -113,7 +122,6 @@ criticalPath = criticalPathCalculator(activities)
 firstTasks = filter(lambda x: len(x.predecessors) == 0, activities)
 lastTasks = filter(lambda x: len(x.successors) == 0, activities)
 
-print("-------------------------------------------------------------------\n")
 print("Number of Schedule Tasks: " + str(len(activities)))
 print("----------------------FIRST TASKS ---------------------------------")
 print("First Tasks Count: " + str(len(firstTasks)) +
@@ -153,4 +161,3 @@ print("Start Day: " + str(startDay) + " Finish Day: " +
 print("Critical Path: " + str(criticalPath))
 
 print("\n====================    END     =====================\n")
-

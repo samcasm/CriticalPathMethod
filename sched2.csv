@@ -1,0 +1,12 @@
+A	3	na
+B	2	A
+C	1	A
+D	1	A
+E	3	A
+F	1	B
+G	2	B
+H	1	B
+I	2	E,F,G,H
+J	1	I
+K	2	J
+L	1	K
