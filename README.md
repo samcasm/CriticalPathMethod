@@ -1,4 +1,4 @@
-# CriticalPathMethod
+# Critical Path Analysis
 
 <h2>Concept:</h2>
 The critical path method (CPM), or critical path analysis (CPA), is an algorithm for scheduling a set of project activities.It is commonly used in conjunction with the program evaluation and review technique (PERT). A critical path is determined by identifying the longest stretch of dependent activities and measuring the time required to complete them from start to finish.
